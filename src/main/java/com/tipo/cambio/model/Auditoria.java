@@ -1,5 +1,6 @@
 package com.tipo.cambio.model;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 
 import javax.persistence.Column;
@@ -12,16 +13,18 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import lombok.Data;
 
 @Data
 @Entity
-@JsonIgnoreProperties(ignoreUnknown = true)
+@JsonIgnoreProperties(ignoreUnknown = true, value = "tarifa")
 @Table(name = "auditoria")
 public class Auditoria {
 
+	@JsonIgnore
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
 	private Long id;
@@ -35,5 +38,11 @@ public class Auditoria {
 
 	@Column(name = "fec_reg", nullable = true)
 	private LocalDateTime fecRegistro;
+
+	@Column(name = "tc_anterior", nullable = false)
+	private BigDecimal tcAnterior;
+
+	@Column(name = "tc_nuevo", nullable = false)
+	private BigDecimal tcNuevo;
 
 }

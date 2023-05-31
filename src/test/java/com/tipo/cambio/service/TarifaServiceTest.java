@@ -63,7 +63,7 @@ class TarifaServiceTest {
 	public void cuandoSeQuiereActualizarTarifaDevuelveNulo() throws Exception {
 
 		when(tarifaRepo.save(any())).thenReturn(null);
-		Tarifa respuesta = tarifaService.actualizar(any(Tarifa.class));
+		Tarifa respuesta = tarifaService.modificar(any(Tarifa.class));
 		assertNull(respuesta);
 		
 	}

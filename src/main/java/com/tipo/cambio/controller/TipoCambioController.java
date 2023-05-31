@@ -1,5 +1,6 @@
 package com.tipo.cambio.controller;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -20,6 +21,7 @@ import com.tipo.cambio.dto.RespuestaConsultaDTO;
 import com.tipo.cambio.exception.ModelNotFoundException;
 import com.tipo.cambio.model.Intercambio;
 import com.tipo.cambio.model.Tarifa;
+import com.tipo.cambio.service.IAuditoriaService;
 import com.tipo.cambio.service.IIntercambioService;
 import com.tipo.cambio.service.ITarifaService;
 import com.tipo.cambio.util.Constantes;
@@ -34,6 +36,9 @@ public class TipoCambioController {
 	@Autowired
 	private IIntercambioService intercambioService;
 
+	@Autowired
+	private IAuditoriaService auditoriaService;
+
 	@PostMapping
 	public ResponseEntity<RespuestaConsultaDTO> consultaTipoCambio(@Valid @RequestBody FiltroConsultaDTO consulta)
 			throws Exception {
@@ -43,12 +48,15 @@ public class TipoCambioController {
 			throw new ModelNotFoundException(
 					String.format("No existe el tipo de cambio para %s", consulta.getCodMoneda()));
 		}
-		intercambioService.registrar(new Intercambio(tipoCambio, consulta.getMonto(), LocalDateTime.now(), tipoCambio.getMtoCompra()));
+		intercambioService.registrar(
+				new Intercambio(tipoCambio, consulta.getMonto(), LocalDateTime.now(), tipoCambio.getMtoCompra()));
 
 		return new ResponseEntity<>(new RespuestaConsultaDTO(consulta, tipoCambio), HttpStatus.OK);
 
 	}
 
+	// TODO : Agregar el transactional para evitar problemas debido a que es un
+	// update & insert
 	@PostMapping("/actualizar")
 	public ResponseEntity<Tarifa> actualizarTipoCambio(@Valid @RequestBody ActualizarTipoCambioDTO dto)
 			throws Exception {
@@ -58,9 +66,12 @@ public class TipoCambioController {
 			throw new ModelNotFoundException(
 					String.format("No existe el registro con codigo Moneda  %s", dto.getCodMoneda()));
 		}
+		BigDecimal tipoCambioAnterior = tarifa.getMtoCompra();
 		tarifa.setMtoCompra(dto.getTipoCambio());
+		Tarifa newTarifaObj = tarifaService.modificar(tarifa);
+		auditoriaService.registrar(newTarifaObj, "se modifico el tipo cambio", tipoCambioAnterior);
 
-		return new ResponseEntity<>(tarifaService.actualizar(tarifa), HttpStatus.OK);
+		return new ResponseEntity<>(newTarifaObj, HttpStatus.OK);
 	}
 
 	@GetMapping("/listar")
