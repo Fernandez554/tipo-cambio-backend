@@ -1,0 +1,8 @@
+2023-05-30 18:49:01 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Error de Sintaxis en sentencia SQL "SELECT * FROM INFORMATION_SCHEMA.TABLES INFORMATION_SCHEMA.[*]TABLES"
+Syntax error in SQL statement "SELECT * FROM INFORMATION_SCHEMA.TABLES INFORMATION_SCHEMA.[*]TABLES"; SQL statement:
+SELECT * FROM INFORMATION_SCHEMA.TABLES INFORMATION_SCHEMA.TABLES [42000-200]
+2023-05-30 18:49:46 jdbc[5]: exception
+org.h2.jdbc.JdbcSQLSyntaxErrorException: Tabla "AUDITORIA" no encontrada
+Table "AUDITORIA" not found; SQL statement:
+select * from auditoria [42102-200]
